@@ -333,10 +333,10 @@ class RiskCalculator:
         soglia = Config.get_soglia_importo()
         if importo is None:
             return f"Importo non specificato - Nessuna anomalia per soglia €{soglia:,.2f}"
-        elif importo >= soglia:
-            return f"⚠️ ATTENZIONE: Importo ≥ €{soglia:,.2f} - ADEGUATA VERIFICA OBBLIGATORIA (Art. 17 D.Lgs. 231/2007)"
-        else:
-            return f"✓ Importo < €{soglia:,.2f} - Nessun obbligo di adeguata verifica per importo"
+     #   elif importo >= soglia:
+     #       return f"ATTENZIONE: Importo ≥ €{soglia:,.2f} - ADEGUATA VERIFICA OBBLIGATORIA"
+     #   else:
+     #       return f"Importo < €{soglia:,.2f} - Nessun obbligo di adeguata verifica per importo"
     
     @staticmethod
     def calcola_livello_da_importo(importo: float) -> int:
@@ -418,15 +418,15 @@ class WordExporter:
     def esporta(dati: Dict, sections_def_A: List[Dict], sections_def_B: List[Dict]) -> None:
         doc = Document()
         WordExporter._configura_stili(doc)
-        title = doc.add_paragraph(f"VALUTAZIONE DEL RISCHIO AML - {dati['cliente']}")
-        title_run = title.runs[0]
+        title = doc.add_paragraph()
+        title_run = title.add_run(f"VALUTAZIONE DEL RISCHIO AML - {dati['cliente']}")
         title_run.bold = True
         title_run.font.size = Pt(18)
         title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        date_para = doc.add_paragraph(f"Data: {dati['data_valutazione']}")
-        date_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        date_run = date_para.runs[0]
+        date_para = doc.add_paragraph()
+        date_run = date_para.add_run(f"Data: {dati['data_valutazione']}")
         date_run.font.size = Pt(10)
+        date_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
         doc.add_paragraph()
         
         if dati.get("usa_solo_tabella_a", False):
@@ -450,11 +450,13 @@ class WordExporter:
             nota_b = doc.add_paragraph()
             nota_b.add_run("B. Aspetti connessi all'operazione e/o prestazione professionale").bold = True
             doc.add_paragraph("TABELLA B NON COMPILATA - Prestazione continuativa (Linee Guida VEDA pag. 97)")
-        
-        doc.add_page_break()
+
+        # Tutto inline, nessun page break
+        doc.add_paragraph()
+        WordExporter._aggiungi_legenda_punteggi(doc)
+        doc.add_paragraph()
         WordExporter._aggiungi_intestazione(doc, dati)
         WordExporter._aggiungi_sintesi_risultati(doc, dati)
-        WordExporter._aggiungi_legenda_punteggi(doc)
         
         # Tronca nome cliente se troppo lungo per evitare problemi filesystem
         cliente_short = dati['cliente'][:30].replace(" ", "_")
@@ -478,15 +480,11 @@ class WordExporter:
     
     @staticmethod
     def _aggiungi_intestazione(doc: Document, dati: Dict) -> None:
-        title = doc.add_paragraph("PROFILATURA DEL RISCHIO AML")
-        title_run = title.runs[0]
+        title = doc.add_paragraph()
+        title_run = title.add_run("PROFILATURA DEL RISCHIO AML")
         title_run.bold = True
         title_run.font.size = Pt(16)
         title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        date_para = doc.add_paragraph(f"Data: {dati['data_valutazione']}")
-        date_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        date_run = date_para.runs[0]
-        date_run.font.size = Pt(10)
         doc.add_paragraph()
         info_table = doc.add_table(rows=8, cols=2)
         info_table.style = 'Light Grid Accent 1'
@@ -510,23 +508,25 @@ class WordExporter:
             row.cells[0].text = label
             row.cells[1].text = str(value)
             for cell in row.cells:
-                cell.paragraphs[0].runs[0].font.size = Pt(11)
-                cell.paragraphs[0].runs[0].font.name = 'Arial'
-            row.cells[0].paragraphs[0].runs[0].bold = True
+                if cell.paragraphs[0].runs:
+                    cell.paragraphs[0].runs[0].font.size = Pt(11)
+                    cell.paragraphs[0].runs[0].font.name = 'Arial'
+            if row.cells[0].paragraphs[0].runs:
+                row.cells[0].paragraphs[0].runs[0].bold = True
         doc.add_paragraph()
     
     @staticmethod
     def _aggiungi_sintesi_risultati(doc: Document, dati: Dict) -> None:
         from docx.oxml.ns import qn
         from docx.oxml import OxmlElement
-        sintesi_title = doc.add_paragraph("SINTESI DELLA VALUTAZIONE E CALCOLI")
-        sintesi_title_run = sintesi_title.runs[0]
+        sintesi_title = doc.add_paragraph()
+        sintesi_title_run = sintesi_title.add_run("SINTESI DELLA VALUTAZIONE E CALCOLI")
         sintesi_title_run.bold = True
         sintesi_title_run.font.size = Pt(16)
         sintesi_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
         doc.add_paragraph()
-        calc_title = doc.add_paragraph("DETTAGLIO DEI CALCOLI")
-        calc_title_run = calc_title.runs[0]
+        calc_title = doc.add_paragraph()
+        calc_title_run = calc_title.add_run("DETTAGLIO DEI CALCOLI")
         calc_title_run.bold = True
         calc_title_run.font.size = Pt(13)
         calc_title_run.underline = True
@@ -541,24 +541,24 @@ class WordExporter:
 
         if dati.get("usa_solo_tabella_a", False):
             calc_data = [
-                ("1. Totale A (Aspetti Cliente)", f"{dati['total_A']:.2f}"), 
-                ("", ""), 
-                ("2. Rischio Specifico = A / numero fattori", f"{dati['total_A']:.2f} / {dati['num_fattori_a']} = {dati['rischio_specifico']:.2f}"), 
-                ("", ""), 
-                ("3. Rischio Inerente (VEDA)", f"{dati['rischio_inerente']}"), 
-                ("", ""), 
-                ("4. CALCOLO FINALE:", "")
+                ("1. Totale A (Aspetti Cliente)", f"{dati['total_A']:.2f}"),
+                ("", ""),
+                ("2. Rischio Specifico = A / numero fattori", f"{dati['total_A']:.2f} / {dati['num_fattori_a']} = {dati['rischio_specifico']:.2f}"),
+                ("", ""),
+                ("3. Rischio Inerente (VEDA)", f"{dati['rischio_inerente']}"),
+                ("", ""),
+                ("4. RISULTATO FINALE", f"Somma Ponderata = {dati['somma']:.2f} - {dati['livello']}")
             ]
         else:
             calc_data = [
-                ("1. Totale A (Aspetti Cliente)", f"{dati['total_A']:.2f}"), 
-                ("2. Totale B (Aspetti Operazione)", f"{dati['total_B']:.2f}"), 
-                ("", ""), 
-                ("3. Rischio Specifico = (A + B) / 10", f"({dati['total_A']:.2f} + {dati['total_B']:.2f}) / 10 = {dati['rischio_specifico']:.2f}"), 
-                ("", ""), 
-                ("4. Rischio Inerente (VEDA)", f"{dati['rischio_inerente']}"), 
-                ("", ""), 
-                ("5. CALCOLO FINALE:", "")
+                ("1. Totale A (Aspetti Cliente)", f"{dati['total_A']:.2f}"),
+                ("2. Totale B (Aspetti Operazione)", f"{dati['total_B']:.2f}"),
+                ("", ""),
+                ("3. Rischio Specifico = (A + B) / 10", f"({dati['total_A']:.2f} + {dati['total_B']:.2f}) / 10 = {dati['rischio_specifico']:.2f}"),
+                ("", ""),
+                ("4. Rischio Inerente (VEDA)", f"{dati['rischio_inerente']}"),
+                ("", ""),
+                ("5. RISULTATO FINALE", f"Somma Ponderata = {dati['somma']:.2f} - {dati['livello']}")
             ]
         
         for i, (label, value) in enumerate(calc_data):
@@ -566,78 +566,162 @@ class WordExporter:
             row.cells[0].text = label
             row.cells[1].text = str(value)
             for cell in row.cells:
-                if cell.text:
+                if cell.text and cell.paragraphs[0].runs:
                     para = cell.paragraphs[0]
                     para.runs[0].font.size = Pt(11)
                     para.runs[0].font.name = 'Arial'
-                    if "CALCOLO FINALE" in label or "Rischio Specifico" in label:
+                    if "RISULTATO FINALE" in label or "Rischio Specifico" in label:
                         para.runs[0].bold = True
                         para.runs[0].font.size = Pt(12)
         doc.add_paragraph()
-        formula_para = doc.add_paragraph()
-        formula_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        formula_text = f"Somma Ponderata = (Inerente × 0.3) + (Specifico × 0.7)\nSomma Ponderata = ({dati['rischio_inerente']} × 0.3) + ({dati['rischio_specifico']:.2f} × 0.7)\nSomma Ponderata = {dati['inerente_ponderato']:.2f} + {dati['specifico_ponderato']:.2f} = {dati['somma']:.2f}"
-        formula_run = formula_para.add_run(formula_text)
-        formula_run.font.size = Pt(12)
-        formula_run.bold = True
-        formula_run.font.name = 'Courier New'
-        pPr = formula_para._element.get_or_add_pPr()
-        shading_elm = OxmlElement('w:shd')
-        shading_elm.set(qn('w:fill'), 'E8F4F8')
-        pPr.append(shading_elm)
-        doc.add_paragraph()
-        doc.add_paragraph()
-        result_title = doc.add_paragraph("RISULTATO FINALE")
-        result_title_run = result_title.runs[0]
-        result_title_run.bold = True
-        result_title_run.font.size = Pt(14)
-        result_title_run.underline = True
-        result_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        result_table = doc.add_table(rows=2, cols=1)
-        result_table.alignment = WD_TABLE_ALIGNMENT.CENTER
-        row0 = result_table.rows[0]
-        row0.cells[0].text = f"SOMMA PONDERATA: {dati['somma']:.2f}"
-        para0 = row0.cells[0].paragraphs[0]
-        para0.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        para0.runs[0].font.size = Pt(14)
-        para0.runs[0].bold = True
-        row1 = result_table.rows[1]
-        row1.cells[0].text = f"LIVELLO DI RISCHIO: {dati['livello']}"
-        para1 = row1.cells[0].paragraphs[0]
-        para1.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        para1.runs[0].font.size = Pt(16)
-        para1.runs[0].bold = True
-        livello = dati['livello']
-        if "NON SIGNIFICATIVO" in livello:
-            color_hex = '90EE90'
-            para1.runs[0].font.color.rgb = RGBColor(0, 100, 0)
-        elif "POCO SIGNIFICATIVO" in livello:
-            color_hex = 'FFFF00'
-            para1.runs[0].font.color.rgb = RGBColor(0, 0, 0)
-        elif "ABBASTANZA SIGNIFICATIVO" in livello:
-            color_hex = 'FFA500'
-            para1.runs[0].font.color.rgb = RGBColor(139, 0, 0)
-        else:
-            color_hex = 'FF6B6B'
-            para1.runs[0].font.color.rgb = RGBColor(139, 0, 0)
-        shading = OxmlElement('w:shd')
-        shading.set(qn('w:fill'), color_hex)
-        row1.cells[0]._element.get_or_add_tcPr().append(shading)
-        doc.add_paragraph()
+        # formula_para = doc.add_paragraph()
+        # formula_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        # formula_text = f"Somma Ponderata = (Inerente × 0.3) + (Specifico × 0.7)\nSomma Ponderata = ({dati['rischio_inerente']} × 0.3) + ({dati['rischio_specifico']:.2f} × 0.7)\nSomma Ponderata = {dati['inerente_ponderato']:.2f} + {dati['specifico_ponderato']:.2f} = {dati['somma']:.2f}"
+        # formula_run = formula_para.add_run(formula_text)
+        # formula_run.font.size = Pt(12)
+        # formula_run.bold = True
+        # formula_run.font.name = 'Courier New'
+        # pPr = formula_para._element.get_or_add_pPr()
+        # shading_elm = OxmlElement('w:shd')
+        # shading_elm.set(qn('w:fill'), 'E8F4F8')
+        # pPr.append(shading_elm)
+        # doc.add_paragraph()
+        # doc.add_paragraph()
+        # result_title = doc.add_paragraph("RISULTATO FINALE")
+        # result_title_run = result_title.runs[0]
+        # result_title_run.bold = True
+        # result_title_run.font.size = Pt(14)
+        # result_title_run.underline = True
+        # result_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        # result_table = doc.add_table(rows=2, cols=1)
+        # result_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        # row0 = result_table.rows[0]
+        # row0.cells[0].text = f"SOMMA PONDERATA: {dati['somma']:.2f}"
+        # para0 = row0.cells[0].paragraphs[0]
+        # para0.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        # para0.runs[0].font.size = Pt(14)
+        # para0.runs[0].bold = True
+        # row1 = result_table.rows[1]
+        # row1.cells[0].text = f"LIVELLO DI RISCHIO: {dati['livello']}"
+        # para1 = row1.cells[0].paragraphs[0]
+        # para1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        # para1.runs[0].font.size = Pt(16)
+        # para1.runs[0].bold = True
+        # livello = dati['livello']
+        # if "NON SIGNIFICATIVO" in livello:
+        #     color_hex = '90EE90'
+        #     para1.runs[0].font.color.rgb = RGBColor(0, 100, 0)
+        # elif "POCO SIGNIFICATIVO" in livello:
+        #     color_hex = 'FFFF00'
+        #     para1.runs[0].font.color.rgb = RGBColor(0, 0, 0)
+        # elif "ABBASTANZA SIGNIFICATIVO" in livello:
+        #     color_hex = 'FFA500'
+        #     para1.runs[0].font.color.rgb = RGBColor(139, 0, 0)
+        # else:
+        #     color_hex = 'FF6B6B'
+        #     para1.runs[0].font.color.rgb = RGBColor(139, 0, 0)
+        # shading = OxmlElement('w:shd')
+        # shading.set(qn('w:fill'), color_hex)
+        # row1.cells[0]._element.get_or_add_tcPr().append(shading)
+        # doc.add_paragraph()
+
+        # Sezione Rischio Rafforzato (se RE > 3.5)
+        if dati.get("dichiarazione_rafforzata"):
+            WordExporter._aggiungi_sezione_rischio_rafforzato(doc, dati)
+
         anomalie_para = doc.add_paragraph()
-        anomalie_para.add_run("ANOMALIE: ").bold = True
-        anomalie_para.add_run(dati['anomalie'])
-        anomalie_para.runs[0].font.size = Pt(12)
-        anomalie_para.runs[1].font.size = Pt(11)
-        if "ATTENZIONE" in dati['anomalie']:
-            anomalie_para.runs[1].font.color.rgb = RGBColor(255, 0, 0)
-            anomalie_para.runs[1].bold = True
-            pPr = anomalie_para._element.get_or_add_pPr()
-            shading_elm = OxmlElement('w:shd')
-            shading_elm.set(qn('w:fill'), 'FFE6E6')
-            pPr.append(shading_elm)
+        run_label = anomalie_para.add_run("ANOMALIE: ")
+        run_label.bold = True
+        run_label.font.size = Pt(12)
+        run_text = anomalie_para.add_run(dati['anomalie'])
+        run_text.font.size = Pt(11)
+        # Niente colori - testo nero su bianco
         doc.add_paragraph()
+
+    @staticmethod
+    def _aggiungi_legenda_punteggi(doc: Document) -> None:
+        from docx.oxml.ns import qn
+        from docx.oxml import OxmlElement
+
+        legenda_title = doc.add_paragraph()
+        legenda_title_run = legenda_title.add_run("LEGENDA DEI LIVELLI DI RISCHIO")
+        legenda_title_run.bold = True
+        legenda_title_run.font.size = Pt(12)
+
+        # Tabella compatta 4 righe x 2 colonne
+        legenda_table = doc.add_table(rows=4, cols=2)
+        legenda_table.style = 'Table Grid'
+
+        # Imposta larghezza colonne - compatta
+        legenda_table.columns[0].width = Cm(4)   # Range
+        legenda_table.columns[1].width = Cm(8)   # Descrizione
+
+        # Dati legenda con colori
+        legenda_data = [
+            ("≤ 2.5", "NON SIGNIFICATIVO", "90EE90", RGBColor(0, 100, 0)),
+            ("2.5 < x ≤ 3.0", "POCO SIGNIFICATIVO", "FFFF00", RGBColor(0, 0, 0)),
+            ("3.0 < x ≤ 3.5", "ABBASTANZA SIGNIFICATIVO", "FFA500", RGBColor(139, 0, 0)),
+            ("> 3.5", "MOLTO SIGNIFICATIVO", "FF6B6B", RGBColor(139, 0, 0))
+        ]
+
+        for i, (range_val, descrizione, bg_color, text_color) in enumerate(legenda_data):
+            row = legenda_table.rows[i]
+
+            # Cella range - usa add_run invece di text
+            cell0 = row.cells[0]
+            para0 = cell0.paragraphs[0]
+            run0 = para0.add_run(range_val)
+            run0.font.size = Pt(10)
+            run0.bold = True
+            para0.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+            # Cella descrizione - usa add_run invece di text
+            cell1 = row.cells[1]
+            para1 = cell1.paragraphs[0]
+            run1 = para1.add_run(descrizione)
+            run1.font.size = Pt(10)
+            run1.bold = True
+            run1.font.color.rgb = text_color
+
+            # Sfondo colorato per entrambe le celle
+            for cell in row.cells:
+                shading = OxmlElement('w:shd')
+                shading.set(qn('w:fill'), bg_color)
+                cell._element.get_or_add_tcPr().append(shading)
     
+    @staticmethod
+    def _aggiungi_sezione_rischio_rafforzato(doc: Document, dati: Dict) -> None:
+        """Aggiunge la sezione di dichiarazione per Rischio Rafforzato (RE > 3.5)"""
+        from docx.oxml import OxmlElement
+        from docx.oxml.ns import qn
+
+        dichiarazione = dati["dichiarazione_rafforzata"]
+
+        doc.add_paragraph()
+
+        # DICHIARAZIONE DEL PROFESSIONISTA
+        dich_title = doc.add_paragraph()
+        run_title = dich_title.add_run("DICHIARAZIONE DEL PROFESSIONISTA")
+        run_title.bold = True
+        run_title.font.size = Pt(12)
+
+        # Testo dichiarazione
+        dich_text = f"""Il Professionista {dati['avvocato']} DICHIARA di aver preso visione degli obblighi di Adeguata Verifica Rafforzata (D.Lgs. 231/2007) e si impegna ad adempierli separatamente, conservando la relativa documentazione nel fascicolo del cliente {dati['cliente']}."""
+
+        dich_para = doc.add_paragraph()
+        run_dich = dich_para.add_run(dich_text)
+        run_dich.font.size = Pt(11)
+
+        doc.add_paragraph()
+
+        # Data, Nome e Firma
+        firma_para = doc.add_paragraph()
+        firma_para.add_run(f"Data: {dati['data_valutazione']}\n\n")
+        firma_para.add_run(f"Il Professionista: {dati['avvocato']}\n\n")
+        firma_para.add_run("Firma: _______________________________")
+        for run in firma_para.runs:
+            run.font.size = Pt(11)
+
     @staticmethod
     def _aggiungi_titolo(doc: Document, testo: str) -> None:
         title = doc.add_paragraph(testo)
@@ -788,60 +872,6 @@ class WordExporter:
     def _aggiungi_note_pep(doc: Document) -> None:
         """Metodo placeholder per note PEP (opzionale)"""
         pass
-    
-    @staticmethod
-    def _aggiungi_legenda_punteggi(doc: Document) -> None:
-        from docx.oxml.ns import qn
-        from docx.oxml import OxmlElement
-        doc.add_paragraph()
-        doc.add_paragraph()
-        legenda_title = doc.add_paragraph("LEGENDA DEI LIVELLI DI RISCHIO RESIDUO")
-        legenda_title_run = legenda_title.runs[0]
-        legenda_title_run.bold = True
-        legenda_title_run.font.size = Pt(14)
-        legenda_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        doc.add_paragraph()
-        legenda_table = doc.add_table(rows=5, cols=2)
-        legenda_table.style = 'Table Grid'
-        legenda_table.alignment = WD_TABLE_ALIGNMENT.CENTER
-
-        # Imposta larghezza colonne
-        legenda_table.columns[0].width = Cm(6)   # Valori ponderati
-        legenda_table.columns[1].width = Cm(11)  # Livello rischio
-
-        header_cells = legenda_table.rows[0].cells
-        header_cells[0].text = "valori ponderati"
-        header_cells[1].text = "livello di rischio residuo"
-        for cell in header_cells:
-            cell.paragraphs[0].runs[0].bold = True
-            cell.paragraphs[0].runs[0].font.size = Pt(12)
-            cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-            shading_elm = OxmlElement('w:shd')
-            shading_elm.set(qn('w:fill'), 'D9D9D9')
-            cell._element.get_or_add_tcPr().append(shading_elm)
-        livelli_data = [
-            ("1 – 1,5", "NON SIGNIFICATIVO", "90EE90"), 
-            ("1,6 – 2,5", "POCO SIGNIFICATIVO", "FFFF00"), 
-            ("2,6 – 3,5", "ABBASTANZA SIGNIFICATIVO", "FFA500"), 
-            ("3,6 – 4", "MOLTO SIGNIFICATIVO", "FF0000")
-        ]
-        for i, (punteggio, livello, colore_hex) in enumerate(livelli_data, start=1):
-            row = legenda_table.rows[i]
-            row.cells[0].text = punteggio
-            cell_0_para = row.cells[0].paragraphs[0]
-            cell_0_para.runs[0].bold = True
-            cell_0_para.runs[0].font.size = Pt(12)
-            cell_0_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            row.cells[1].text = livello
-            cell_1_para = row.cells[1].paragraphs[0]
-            cell_1_para.runs[0].bold = True
-            cell_1_para.runs[0].font.size = Pt(12)
-            cell_1_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            for cell in row.cells:
-                shading_elm = OxmlElement('w:shd')
-                shading_elm.set(qn('w:fill'), colore_hex)
-                cell._element.get_or_add_tcPr().append(shading_elm)
-                cell.paragraphs[0].runs[0].font.color.rgb = RGBColor(0, 0, 0)
 
 # =====================================================================
 # APPLICAZIONE PRINCIPALE
@@ -1637,7 +1667,7 @@ ESEMPI:
                 livello_text = {1: "NON SIGNIFICATIVO", 2: "POCO SIGNIFICATIVO",
                               3: "ABBASTANZA SIGNIFICATIVO", 4: "MOLTO SIGNIFICATIVO"}
                 self.label_natura_livello.config(
-                    text=f"🤖 RILEVATO AUTOMATICAMENTE: Livello {livello} - {livello_text[livello]}",
+                    text=f"🤖 RILEVATO AUTOMATICAMENTE - NON SELEZIONARE NULLA DAL MENÙ A TENDINA SOTTOSTANTE: Livello {livello} - {livello_text[livello]}",
                     fg=color_scheme["auto_label"]
                 )
                 # Seleziona automaticamente nel dropdown
@@ -2263,7 +2293,15 @@ Ponderazione:
 Avv. {avvocato}"""
             
             self.label_risultato.config(text=risultato)
-            
+
+            # Gestione Rischio Rafforzato (RE > 3.5)
+            dichiarazione_rafforzata = None
+            if somma > 3.5:
+                dichiarazione_rafforzata = self._mostra_dialog_rischio_rafforzato(somma, livello)
+                if dichiarazione_rafforzata is None:
+                    # L'utente ha chiuso il dialog senza accettare
+                    return
+
             self.dati_export = {
                 "data_valutazione": data_valutazione,
                 "cliente": cliente,
@@ -2289,7 +2327,8 @@ Avv. {avvocato}"""
                 "sub_medias_A": sub_medias_A,
                 "sub_medias_B": sub_medias_B,
                 "usa_solo_tabella_a": usa_solo_tabella_a,
-                "num_fattori_a": num_fattori_a if usa_solo_tabella_a else 0
+                "num_fattori_a": num_fattori_a if usa_solo_tabella_a else 0,
+                "dichiarazione_rafforzata": dichiarazione_rafforzata
             }
             
             messagebox.showinfo("Successo", "Valutazione completata con successo!")
@@ -2298,7 +2337,127 @@ Avv. {avvocato}"""
             messagebox.showerror("Errore", f"Controlla gli input:\n- Livelli devono essere tra 1 e 4\n- Importo deve essere un numero valido\n\nDettaglio: {str(e)}")
         except Exception as e:
             messagebox.showerror("Errore", f"Errore imprevisto: {str(e)}")
-    
+
+    def _mostra_dialog_rischio_rafforzato(self, somma_ponderata: float, livello: str) -> Optional[Dict]:
+        """
+        Mostra un dialog modale per Rischio Rafforzato (RE > 3.5).
+        Richiede l'accettazione esplicita degli obblighi di Adeguata Verifica Rafforzata.
+        Restituisce un dizionario con timestamp e dichiarazione, oppure None se rifiutato.
+        """
+        dialog = tk.Toplevel(self.root)
+        dialog.title("⚠️ RISCHIO RAFFORZATO - Adeguata Verifica Rafforzata Obbligatoria")
+        dialog.geometry("800x600")
+        dialog.resizable(False, False)
+        dialog.grab_set()  # Modale
+        dialog.transient(self.root)
+
+        # Centra il dialog
+        dialog.update_idletasks()
+        x = (dialog.winfo_screenwidth() // 2) - (800 // 2)
+        y = (dialog.winfo_screenheight() // 2) - (600 // 2)
+        dialog.geometry(f"+{x}+{y}")
+
+        color_scheme = Config.get_color_scheme()
+        dialog.configure(bg="#FFF3CD")  # Giallo warning
+
+        # Header
+        header_frame = tk.Frame(dialog, bg="#FFC107", pady=15)
+        header_frame.pack(fill="x")
+
+        tk.Label(header_frame, text="⚠️ ATTENZIONE: RISCHIO RAFFORZATO RILEVATO",
+                font=("Helvetica", 16, "bold"), bg="#FFC107", fg="#000000").pack()
+
+        tk.Label(header_frame, text=f"Rischio Effettivo Calcolato: {somma_ponderata:.2f} - {livello}",
+                font=("Helvetica", 12), bg="#FFC107", fg="#000000").pack(pady=5)
+
+        # Body
+        body_frame = tk.Frame(dialog, bg="#FFF3CD", padx=30, pady=20)
+        body_frame.pack(fill="both", expand=True)
+
+        # Frame per il testo informativo con sfondo bianco e bordo
+        info_frame = tk.Frame(body_frame, bg="#FFFFFF", relief="solid", borderwidth=2, padx=15, pady=15)
+        info_frame.pack(fill="both", expand=True, pady=(0, 20))
+
+        info_label = tk.Label(info_frame,
+                             text="Il Livello di Rischio Effettivo calcolato supera la soglia di 3.5,\nconfigurano un caso di RISCHIO RAFFORZATO.\n\n" +
+                                  "Ai sensi del D.Lgs. 231/2007 (Artt. 17, 23, 28) e delle Linee Guida VEDA\n" +
+                                  "Edizione 02-2020, il Professionista è OBBLIGATO ad applicare\n" +
+                                  "l'Adeguata Verifica Rafforzata, che include tra gli altri obblighi:\n\n" +
+                                  "• Acquisizione e analisi documentale della PROVENIENZA DEI FONDI\n" +
+                                  "• Acquisizione e analisi documentale della DESTINAZIONE DEI FONDI\n" +
+                                  "• Verifica rafforzata dell'identità del cliente e del titolare effettivo\n" +
+                                  "• Acquisizione di informazioni sullo scopo e sulla natura del rapporto\n" +
+                                  "• Monitoraggio continuo del rapporto professionale\n" +
+                                  "• Conservazione della documentazione per almeno 10 anni\n\n" +
+                                  "L'omissione di tali obblighi può comportare sanzioni amministrative\n" +
+                                  "pecuniarie (da €2.500 a €50.000 per le violazioni più gravi)\n" +
+                                  "e responsabilità disciplinare.",
+                             font=("Helvetica", 10), bg="#FFFFFF", fg="#000000",
+                             justify="left", anchor="nw")
+        info_label.pack(fill="both", expand=True)
+
+        # Checkbox obbligatoria
+        checkbox_var = tk.BooleanVar(value=False)
+        checkbox_frame = tk.Frame(body_frame, bg="#FFF3CD")
+        checkbox_frame.pack(fill="x", pady=(0, 20))
+
+        checkbox = tk.Checkbutton(checkbox_frame,
+                                 text="Dichiaro di aver preso visione degli obblighi di Adeguata Verifica Rafforzata e mi impegno ad adempierli",
+                                 variable=checkbox_var, bg="#FFF3CD", font=("Helvetica", 10, "bold"),
+                                 fg="#8B0000", activebackground="#FFF3CD", wraplength=700, justify="left")
+        checkbox.pack(anchor="w")
+
+        # Risultato (None = annulla, Dict = accettato)
+        risultato = {"value": None}
+
+        def conferma():
+            if not checkbox_var.get():
+                messagebox.showwarning("Attenzione", "Devi spuntare la casella di accettazione per procedere.", parent=dialog)
+                return
+
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%d/%m/%Y alle ore %H:%M:%S")
+            risultato["value"] = {
+                "accepted": True,
+                "timestamp": timestamp,
+                "somma_ponderata": somma_ponderata,
+                "livello": livello
+            }
+            dialog.destroy()
+
+        def annulla():
+            risposta = messagebox.askyesno("Conferma Annullamento",
+                                          "Sei sicuro di voler annullare?\nLa valutazione NON verrà salvata.",
+                                          parent=dialog)
+            if risposta:
+                risultato["value"] = None
+                dialog.destroy()
+
+        # Bottoni
+        button_frame = tk.Frame(body_frame, bg="#FFF3CD")
+        button_frame.pack(fill="x")
+
+        btn_conferma = tk.Button(button_frame, text="✓ Confermo e Procedo", command=conferma,
+                                bg="#28A745", fg="white", font=("Helvetica", 12, "bold"),
+                                padx=20, pady=10)
+        btn_conferma.pack(side="left", expand=True, padx=(0, 10))
+
+        btn_annulla = tk.Button(button_frame, text="✗ Annulla Valutazione", command=annulla,
+                               bg="#DC3545", fg="white", font=("Helvetica", 12, "bold"),
+                               padx=20, pady=10)
+        btn_annulla.pack(side="left", expand=True, padx=(10, 0))
+
+        # Impedisce chiusura con X senza conferma
+        def on_closing():
+            annulla()
+
+        dialog.protocol("WM_DELETE_WINDOW", on_closing)
+
+        # Aspetta che il dialog venga chiuso
+        dialog.wait_window()
+
+        return risultato["value"]
+
     def esporta_word(self) -> None:
         if self.dati_export is None:
             messagebox.showerror("Errore", "Prima esegui la valutazione del rischio!")
