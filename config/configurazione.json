@@ -1,0 +1,154 @@
+{
+  "_metadata": {
+    "descrizione": "Configurazioni generali applicazione AML Risk Assessment",
+    "versione": "3.0.0",
+    "ultimo_aggiornamento": "2025-01-13",
+    "compatibilita": "Python 3.8+",
+    "dipendenze": ["tkinter", "python-docx"]
+  },
+  
+  "normativa": {
+    "soglia_adeguata_verifica": {
+      "valore": 15000.0,
+      "valuta": "EUR",
+      "riferimento_normativo": "Art. 17 D.Lgs. 231/2007",
+      "descrizione": "Soglia per adeguata verifica obbligatoria",
+      "nota": "Operazioni >= €15.000 richiedono adeguata verifica della clientela"
+    },
+    "riferimenti_normativi": {
+      "decreto_principale": "D.Lgs. 231/2007 (Attuazione direttiva 2005/60/CE - Antiriciclaggio)",
+      "modifiche": [
+        "D.Lgs. 90/2017 (IV Direttiva AML)",
+        "D.Lgs. 125/2019 (V Direttiva AML)"
+      ],
+      "linee_guida": "Linee Guida VEDA Edizione 02-2020 (CNDCEC)",
+      "regolamento_ue": "Regolamento Delegato UE 2019/1326 del 13/02/2019 (Paesi ad alto rischio)"
+    }
+  },
+  
+  "calcolo_rischio": {
+    "descrizione": "Metodologia VEDA per calcolo rischio residuo",
+    "formula_rischio_specifico": {
+      "normale": "(Totale_A + Totale_B) / 10",
+      "solo_tabella_a": "Totale_A / numero_fattori_A",
+      "nota": "Il calcolo cambia per prestazioni continuative (contabilità, revisione)"
+    },
+    "ponderazione": {
+      "rischio_inerente": 0.3,
+      "rischio_specifico": 0.7,
+      "formula": "Somma_Ponderata = (Inerente × 0.3) + (Specifico × 0.7)"
+    },
+    "classificazione_livelli": {
+      "1.0-1.5": "NON SIGNIFICATIVO",
+      "1.6-2.5": "POCO SIGNIFICATIVO",
+      "2.6-3.5": "ABBASTANZA SIGNIFICATIVO",
+      "3.6-4.0": "MOLTO SIGNIFICATIVO"
+    },
+    "fonte": "Linee Guida VEDA pagina 97"
+  },
+  
+  "soglie_importo_indicative": {
+    "_disclaimer": "ATTENZIONE: Soglie NON presenti in VEDA ufficiale. Basate su prassi comune di mercato.",
+    "livello_1": {
+      "range": "< €50.000",
+      "descrizione": "Operazioni piccole",
+      "livello_rischio": 1
+    },
+    "livello_2": {
+      "range": "€50.000 - €250.000",
+      "descrizione": "Operazioni medie",
+      "livello_rischio": 2
+    },
+    "livello_3": {
+      "range": "€250.000 - €1.000.000",
+      "descrizione": "Operazioni rilevanti",
+      "livello_rischio": 3
+    },
+    "livello_4": {
+      "range": "> €1.000.000",
+      "descrizione": "Operazioni molto rilevanti",
+      "livello_rischio": 4
+    },
+    "nota": "Utilizzare solo come indicazione di massima. Valutazione professionale sempre necessaria."
+  },
+  
+  "interfaccia_grafica": {
+    "colori": {
+      "background": "#A7A9AB",
+      "frame_background": "#ECF0F1",
+      "input_background": "#F9F9F5",
+      "text_foreground": "#2C3E50",
+      "button_background": "#2C3E50",
+      "button_foreground": "white",
+      "button_hover": "#34495E",
+      "button_active": "#1A252F",
+      "selection_color": "#D3E0EA",
+      "tooltip_background": "#FFFEF0",
+      "tooltip_foreground": "#000000",
+      "auto_section_background": "#E8F8F5",
+      "auto_section_label": "#27AE60"
+    },
+    "dimensioni_finestra": {
+      "larghezza_minima": 1200,
+      "altezza_minima": 700,
+      "percentuale_schermo_larghezza": 0.90,
+      "percentuale_schermo_altezza": 0.85
+    },
+    "font": {
+      "principale": "Helvetica",
+      "titolo_size": 16,
+      "sottotitolo_size": 9,
+      "label_size": 10,
+      "tooltip_size": 11
+    }
+  },
+  
+  "colori_livelli_rischio": {
+    "livello_1": {
+      "nome": "NON SIGNIFICATIVO",
+      "colore_hex": "#27AE60",
+      "colore_rgb": [39, 174, 96],
+      "colore_word": "90EE90"
+    },
+    "livello_2": {
+      "nome": "POCO SIGNIFICATIVO",
+      "colore_hex": "#F39C12",
+      "colore_rgb": [243, 156, 18],
+      "colore_word": "FFFF00"
+    },
+    "livello_3": {
+      "nome": "ABBASTANZA SIGNIFICATIVO",
+      "colore_hex": "#E67E22",
+      "colore_rgb": [230, 126, 34],
+      "colore_word": "FFA500"
+    },
+    "livello_4": {
+      "nome": "MOLTO SIGNIFICATIVO",
+      "colore_hex": "#E74C3C",
+      "colore_rgb": [231, 76, 60],
+      "colore_word": "FF6B6B"
+    }
+  },
+  
+  "export_word": {
+    "font_default": "Arial",
+    "font_size_default": 11,
+    "titolo_size": 18,
+    "sottotitolo_size": 16,
+    "interlinea": 1.15,
+    "stile_tabella": "Light Grid Accent 1",
+    "nome_file_pattern": "Valutazione_Rischio_{cliente}_{data}.docx"
+  },
+  
+  "tooltip": {
+    "delay_millisecondi": 500,
+    "lunghezza_massima_testo": 500
+  },
+  
+  "validazione": {
+    "campo_obbligatorio_cliente": true,
+    "livello_minimo": 1,
+    "livello_massimo": 4,
+    "formato_importo": "numero con virgola o punto come separatore decimale"
+  }
+}

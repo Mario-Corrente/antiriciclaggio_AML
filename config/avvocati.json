@@ -1,0 +1,26 @@
+{
+  "_descrizione": "Lista degli avvocati dello studio legale",
+  "_versione": "1.0",
+  "_ultimo_aggiornamento": "14/10/2025",
+  
+  "avvocati": {
+    "Cecilia Aguglia": "Avvocato",
+    "Federica Maria Bucci": "Avvocato",
+    "Eugenia Canistro": "Avvocato",
+    "Simon Cartwright": "Avvocato",
+    "Alessia Casadio": "Avvocato",
+    "Beatrice Cremonese": "Avvocato",
+    "Eleonora Giacometti": "Avvocato",
+    "Virginie Lopes": "Avvocato",
+    "Asia Bartolini": "Avvocato",
+    "Eleonora Mirabelli": "Avvocato",
+    "Giacomo Pescatore": "Avvocato",
+    "Maddalena Poggi": "Avvocato",
+    "Monica Righini": "Avvocato",
+    "Giovanni Santià": "Avvocato",
+    "Martìn Ignacio Santivàñez": "Avvocato",
+    "Francesca Zicchitella": "Avvocato",
+    "Leonardo Biancalana": "Avvocato",
+    "Marco Zicchitella": "Avvocato"
+  }
+}

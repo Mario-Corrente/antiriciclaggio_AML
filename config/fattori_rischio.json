@@ -1,0 +1,101 @@
+{
+  "_metadata": {
+    "descrizione": "Fattori di rischio manuali per Tabella A (cliente) e Tabella B (operazione)",
+    "versione": "1.0.0",
+    "ultimo_aggiornamento": "2025-01-13",
+    "fonte": "Linee Guida VEDA Edizione 02-2020",
+    "note": "Questi fattori richiedono valutazione professionale soggettiva (1-4)"
+  },
+  
+  "tabella_a_aspetti_cliente": {
+    "_descrizione": "Fattori connessi al profilo del cliente",
+    "A.1 - Natura giuridica": {
+      "fattori": [
+        "Non congruità della natura giuridica prescelta in relazione all'attività svolta e alle sue dimensioni",
+        "Articolazione giuridica, complessità e opacità della struttura volte ad ostacolare l'identificazione del titolare effettivo o l'attività concretamente svolta",
+        "Partecipazione di persone politicamente esposte (cliente, esecutore, titolare effettivo)",
+        "Incarichi in società, associazioni, fondazioni, organizzazioni non lucrative, organizzazioni non governative soprattutto se aventi sede in paesi ad alto rischio o non collaborativi",
+        "Processi penali o indagini in corso per circostanze attinenti al terrorismo, al riciclaggio o all'autoriciclaggio – Misure di prevenzione o provvedimenti di sequestro - Familiarità/stretti legami con soggetti sottoposti a indagini o a procedimenti penali o provvedimenti di sequestro o censiti nelle liste delle persone o degli enti attivi nel finanziamento del terrorismo"
+      ],
+      "note": "Valutare natura giuridica oggettiva (da database) + eventuali fattori soggettivi di rischio aggiuntivi"
+    },
+    "A.2 - Prevalente attività svolta": {
+      "fattori": [
+        "Attività esposte al rischio di infiltrazioni criminali e terroristiche secondo le periodiche pubblicazioni delle Autorità in materia",
+        "Struttura organizzativa e dimensionale non coerente con l'attività svolta",
+        "Non conformità dell'attività svolta rispetto a quella indicata nell'atto costitutivo",
+        "Altro"
+      ],
+      "note": "Valutare congruenza tra attività dichiarata, dimensione aziendale e struttura operativa"
+    },
+    "A.3 - Comportamento tenuto al momento del conferimento dell'incarico": {
+      "fattori": [
+        "Cliente non presente fisicamente",
+        "Presenza di soggetti terzi con ruolo non definito",
+        "Comportamento non trasparente e collaborativo",
+        "Difficoltà nell'individuazione del titolare effettivo",
+        "Altro"
+      ],
+      "note": "Valutare collaborazione e trasparenza del cliente durante adeguata verifica"
+    }
+  },
+  
+  "tabella_b_aspetti_operazione": {
+    "_descrizione": "Fattori connessi alla specifica operazione o prestazione professionale",
+    "B.1 - Tipologia": {
+      "fattori": [
+        "Operazione ordinaria/straordinaria rispetto al profilo soggettivo del cliente",
+        "Operazione che prevede schemi negoziali che possono agevolare l'opacità delle relazioni economiche e finanziarie intercorrenti tra il cliente e la controparte",
+        "Articolazione contrattuale ingiustificata",
+        "Altro"
+      ],
+      "note": "Valutare complessità e opacità della struttura negoziale"
+    },
+    "B.2 - Modalità di svolgimento": {
+      "fattori": [
+        "Utilizzo di mezzi di pagamento non tracciati - Utilizzo di valute virtuali",
+        "Utilizzo di conti non propri per trasferire/ricevere fondi",
+        "Ricorso reiterato a procure",
+        "Ricorso a domiciliazioni di comodo",
+        "Altro"
+      ],
+      "note": "Valutare tracciabilità dei flussi finanziari e presenza di intermediari anomali"
+    },
+    "B.4 - Frequenza e volume delle operazioni/durata della prestazione professionale": {
+      "fattori": [
+        "Non congruità della frequenza dell'operazione rispetto all'attività esercitata – Operatività improvvisa e poco giustificata rispetto all'ordinaria attività – Operazioni di ammontare consistente, concentrate in un ristretto arco temporale",
+        "Rapporto professionale continuativo o occasionale",
+        "Altro"
+      ],
+      "note": "Valutare pattern operativi anomali rispetto al profilo del cliente"
+    },
+    "B.5 - Ragionevolezza": {
+      "fattori": [
+        "Irragionevolezza dell'operazione rispetto all'attività svolta dal cliente",
+        "Irragionevolezza dell'operazione rispetto all'entità delle risorse economiche nella disponibilità del cliente",
+        "Non congruità dell'operazione rispetto alle finalità dichiarate",
+        "Altro"
+      ],
+      "note": "Valutare coerenza economica tra operazione, attività cliente e finalità dichiarate"
+    }
+  },
+  
+  "linee_guida_valutazione": {
+    "livello_1": {
+      "descrizione": "NON SIGNIFICATIVO",
+      "quando_usare": "Fattore presente ma con impatto trascurabile sul rischio"
+    },
+    "livello_2": {
+      "descrizione": "POCO SIGNIFICATIVO",
+      "quando_usare": "Fattore presente con impatto limitato, situazione sotto controllo"
+    },
+    "livello_3": {
+      "descrizione": "ABBASTANZA SIGNIFICATIVO",
+      "quando_usare": "Fattore presente con impatto rilevante, richiede attenzione"
+    },
+    "livello_4": {
+      "descrizione": "MOLTO SIGNIFICATIVO",
+      "quando_usare": "Fattore presente con impatto critico, massima allerta"
+    }
+  }
+}

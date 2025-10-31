@@ -1,0 +1,115 @@
+{
+  "_metadata": {
+    "descrizione": "Tabella VEDA - Rischio Inerente per Prestazione Professionale",
+    "versione": "1.0.0",
+    "ultimo_aggiornamento": "2025-01-13",
+    "fonte": "Linee Guida VEDA Edizione 02-2020, pagina 99",
+    "validita": "Tabella ufficiale CNDCEC vincolante dal 01/01/2020",
+    "note": "I livelli vanno da 1 (non significativo) a 4 (molto significativo)"
+  },
+  
+  "livelli_rischio": {
+    "1": "NON SIGNIFICATIVO",
+    "2": "POCO SIGNIFICATIVO",
+    "3": "ABBASTANZA SIGNIFICATIVO",
+    "4": "MOLTO SIGNIFICATIVO"
+  },
+  
+  "prestazioni": {
+    "Assistenza, consulenza e rappresentanza in materia tributaria": {
+      "livello": 2,
+      "categoria": "Consulenza fiscale",
+      "descrizione": "Supporto per adempimenti fiscali"
+    },
+    "Assistenza per richiesta finanziamenti": {
+      "livello": 3,
+      "categoria": "Finanza",
+      "descrizione": "Supporto per ottenimento credito"
+    },
+    "Assistenza e consulenza societaria continuativa e generica": {
+      "livello": 3,
+      "categoria": "Consulenza societaria",
+      "descrizione": "Supporto continuativo per gestione ordinaria"
+    },
+    "Consulenza aziendale generica": {
+      "livello": 3,
+      "categoria": "Consulenza gestionale",
+      "descrizione": "Consulenza aziendale generica"
+    },
+    "Consulenza contrattuale": {
+      "livello": 2,
+      "categoria": "Consulenza legale",
+      "descrizione": "Supporto per contrattualistica"
+    },
+    "Costituzione/liquidazione di società, enti, trust o strutture analoghe": {
+      "livello": 3,
+      "categoria": "Operazioni straordinarie",
+      "descrizione": "Creazione o chiusura entità giuridiche"
+    },
+    "Consulenza in operazioni di finanza straordinaria": {
+      "livello": 4,
+      "categoria": "Finanza straordinaria",
+      "descrizione": "M&A, fusioni, acquisizioni, ristrutturazioni"
+    }
+  },
+  
+  "prestazioni_solo_tabella_a": {
+    "_descrizione": "Prestazioni professionali che richiedono compilazione SOLO Tabella A (aspetti cliente)",
+    "_fonte": "Linee Guida VEDA pagina 97",
+    "_nota": "Per prestazioni continuative la Tabella B non deve essere compilata",
+    "lista": [
+      "Tenuta della contabilità",
+      "Revisione legale dei conti"
+    ]
+  },
+  
+  "categorie_prestazioni": {
+    "Amministrazione e custodia": [
+      "Amministrazione e liquidazione di aziende, patrimoni, singoli beni",
+      "Custodia e conservazione di beni e aziende"
+    ],
+    "Amministrazione societaria": [
+      "Amministrazione di società, enti, trust o strutture analoghe"
+    ],
+    "Consulenza fiscale": [
+      "Assistenza, consulenza e rappresentanza in materia tributaria"
+    ],
+    "Finanza": [
+      "Assistenza per richiesta finanziamenti"
+    ],
+    "Consulenza societaria": [
+      "Assistenza e consulenza societaria continuativa e generica"
+    ],
+    "Valutazione progetti": [
+      "Attività di valutazione tecnica dell'iniziativa di impresa e business plan per finanziamenti pubblici"
+    ],
+    "Consulenza gestionale": [
+      "Consulenza aziendale",
+      "Consulenza aziendale generica"
+    ],
+    "Consulenza legale": [
+      "Consulenza contrattuale"
+    ],
+    "Consulenza finanziaria": [
+      "Consulenza economico-finanziaria"
+    ],
+    "Operazioni straordinarie": [
+      "Costituzione/liquidazione di società, enti, trust o strutture analoghe"
+    ],
+    "Finanza straordinaria": [
+      "Consulenza in operazioni di finanza straordinaria"
+    ],
+    "Contabilità": [
+      "Tenuta della contabilità"
+    ],
+    "Bilancio": [
+      "Consulenza in materia di redazione del bilancio"
+    ],
+    "Revisione": [
+      "Revisione legale dei conti"
+    ],
+    "Valutazioni": [
+      "Valutazione di aziende, rami d'azienda, patrimoni, singoli beni e diritti"
+    ]
+  }
+}

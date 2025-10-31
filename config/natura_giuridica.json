@@ -1,0 +1,164 @@
+{
+  "_metadata": {
+    "descrizione": "Database natura giuridica per identificazione automatica livello rischio",
+    "versione": "1.0.0",
+    "ultimo_aggiornamento": "2025-01-13",
+    "fonte": "Database interno + classificazione VEDA",
+    "note": "Livelli da 1 (basso rischio) a 4 (alto rischio). Sistema ibrido: database esatto + keywords + categorie manuali"
+  },
+  
+  "database_esatto": {
+    "descrizione": "Elenco specifico di entità note con livello pre-assegnato",
+    "_livelli": {
+      "1": "Banche, Assicurazioni, PA, Grandi aziende quotate (>€50M)",
+      "2": "Medie imprese consolidate (€10-50M), Studi professionali noti",
+      "3": "PMI (<€10M), SRL/SPA piccole, Professionisti, Associazioni",
+      "4": "Trust, Offshore, Fiduciarie, Paradisi fiscali - MASSIMA ATTENZIONE"
+    },
+    
+    "banche_italiane": {
+      "_livello": 1,
+      "Intesa Sanpaolo": "Banca italiana vigilata",
+      "UniCredit": "Banca italiana vigilata",
+      "Banco BPM": "Banca italiana vigilata",
+      "BPER Banca": "Banca italiana vigilata",
+      "Monte dei Paschi": "Banca italiana vigilata",
+      "MPS": "Banca italiana vigilata",
+      "Mediobanca": "Banca italiana vigilata",
+      "Credem": "Banca italiana vigilata",
+      "BNL": "Banca italiana vigilata",
+      "Banca Popolare di Sondrio": "Banca italiana vigilata"
+    },
+    
+    "assicurazioni": {
+      "_livello": 1,
+      "Generali": "Compagnia assicurativa italiana",
+      "Allianz": "Compagnia assicurativa vigilata",
+      "UnipolSai": "Compagnia assicurativa italiana",
+      "Reale Mutua": "Compagnia assicurativa italiana",
+      "AXA": "Compagnia assicurativa vigilata",
+      "Poste Vita": "Compagnia assicurativa italiana"
+    },
+    
+    "grandi_aziende": {
+      "_livello": 1,
+      "ENI": "Grande azienda quotata italiana",
+      "ENEL": "Grande azienda quotata italiana",
+      "TIM": "Grande azienda quotata italiana",
+      "Telecom Italia": "Grande azienda quotata italiana",
+      "Poste Italiane": "Grande azienda italiana",
+      "Leonardo": "Grande azienda quotata italiana",
+      "Terna": "Grande azienda quotata italiana",
+      "Snam": "Grande azienda quotata italiana",
+      "Atlantia": "Grande azienda quotata italiana",
+      "Ferrovie dello Stato": "Grande azienda pubblica italiana",
+      "FS": "Grande azienda pubblica italiana",
+      "A2A": "Grande azienda quotata italiana",
+      "Hera": "Grande azienda quotata italiana",
+      "Italgas": "Grande azienda quotata italiana",
+      "Stellantis": "Grande azienda quotata",
+      "FIAT": "Grande azienda italiana",
+      "Ferrari": "Grande azienda quotata italiana",
+      "Moncler": "Grande azienda quotata italiana",
+      "Prysmian": "Grande azienda quotata italiana",
+      "Saipem": "Grande azienda quotata italiana",
+      "Pirelli": "Grande azienda italiana"
+    },
+    
+    "pubblica_amministrazione": {
+      "_livello": 1,
+      "Comune": "Pubblica Amministrazione",
+      "Regione": "Pubblica Amministrazione",
+      "Provincia": "Pubblica Amministrazione",
+      "Ministero": "Pubblica Amministrazione",
+      "Agenzia delle Entrate": "Pubblica Amministrazione",
+      "INPS": "Ente pubblico",
+      "INAIL": "Ente pubblico"
+    },
+    
+    "studi_professionali": {
+      "_livello": 2,
+      "Studio Legale": "Studio professionale noto",
+      "Studio Associato": "Studio professionale",
+      "Ordine Avvocati": "Ente pubblico economico"
+    },
+    
+    "societa_comuni": {
+      "_livello": 3,
+      "SRL": "Società a Responsabilità Limitata",
+      "SPA": "Società per Azioni",
+      "SNC": "Società in Nome Collettivo",
+      "SAS": "Società in Accomandita Semplice",
+      "Associazione": "Associazione",
+      "Fondazione": "Fondazione",
+      "Cooperativa": "Cooperativa"
+    },
+    
+    "alto_rischio": {
+      "_livello": 4,
+      "Trust": "Trust - Massima attenzione",
+      "Fiduciaria": "Società fiduciaria - Alto rischio",
+      "Offshore": "Società offshore - Alto rischio",
+      "Portatore": "Azioni al portatore - Alto rischio"
+    }
+  },
+  
+  "keywords_ricerca": {
+    "_descrizione": "Parole chiave per identificazione automatica quando non c'è match esatto nel database",
+    "livello_1": [
+      "banca",
+      "assicurazione",
+      "quotata",
+      "spa quotata",
+      "borsa",
+      "comune di",
+      "regione",
+      "provincia",
+      "ministero",
+      "agenzia",
+      "inps",
+      "inail"
+    ],
+    "livello_2": [
+      "studio legale",
+      "studio commercialisti",
+      "ordine",
+      "collegio",
+      "consolidata"
+    ],
+    "livello_3": [
+      "srl",
+      "spa",
+      "snc",
+      "sas",
+      "sapa",
+      "cooperativa",
+      "associazione",
+      "fondazione",
+      "ditta individuale",
+      "professionista",
+      "avvocato",
+      "commercialista"
+    ],
+    "livello_4": [
+      "trust",
+      "offshore",
+      "fiduciaria",
+      "portatore",
+      "seychelles",
+      "cayman",
+      "panama",
+      "bvi",
+      "delaware",
+      "dubai free zone"
+    ]
+  },
+  
+  "categorie_manuali": {
+    "_descrizione": "Opzioni dropdown per selezione manuale quando ricerca automatica non trova risultati",
+    "Livello 1: PA / Banca / Assicurazione / Grande azienda quotata (fatturato >€50M)": 1,
+    "Livello 2: Media impresa consolidata (€10-50M) / Studio professionale noto": 2,
+    "Livello 3: PMI (< €10M) / SRL-SPA piccola / Professionista / Associazione": 3,
+    "Livello 4: Trust / Offshore / Fiduciaria / Azioni al portatore / Paradiso fiscale": 4
+  }
+}
