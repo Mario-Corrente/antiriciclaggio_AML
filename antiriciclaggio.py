@@ -519,6 +519,7 @@ class WordExporter:
     def _aggiungi_sintesi_risultati(doc: Document, dati: Dict) -> None:
         from docx.oxml.ns import qn
         from docx.oxml import OxmlElement
+        doc.add_page_break()
         sintesi_title = doc.add_paragraph()
         sintesi_title_run = sintesi_title.add_run("SINTESI DELLA VALUTAZIONE E CALCOLI")
         sintesi_title_run.bold = True
@@ -574,6 +575,12 @@ class WordExporter:
                         para.runs[0].bold = True
                         para.runs[0].font.size = Pt(12)
         doc.add_paragraph()
+        firma_para = doc.add_paragraph()
+        firma_para.add_run(f"Data: {dati['data_valutazione']}\n\n")
+        firma_para.add_run(f"Avvocato: {dati['avvocato']}\n\n")
+        firma_para.add_run("Firma: _______________________________")
+        for run in firma_para.runs:
+            run.font.size = Pt(11)
         # formula_para = doc.add_paragraph()
         # formula_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
         # formula_text = f"Somma Ponderata = (Inerente × 0.3) + (Specifico × 0.7)\nSomma Ponderata = ({dati['rischio_inerente']} × 0.3) + ({dati['rischio_specifico']:.2f} × 0.7)\nSomma Ponderata = {dati['inerente_ponderato']:.2f} + {dati['specifico_ponderato']:.2f} = {dati['somma']:.2f}"
@@ -630,7 +637,7 @@ class WordExporter:
             WordExporter._aggiungi_sezione_rischio_rafforzato(doc, dati)
 
         anomalie_para = doc.add_paragraph()
-        run_label = anomalie_para.add_run("ANOMALIE: ")
+        run_label = anomalie_para.add_run("")
         run_label.bold = True
         run_label.font.size = Pt(12)
         run_text = anomalie_para.add_run(dati['anomalie'])
@@ -706,7 +713,7 @@ class WordExporter:
         run_title.font.size = Pt(12)
 
         # Testo dichiarazione
-        dich_text = f"""Il Professionista {dati['avvocato']} DICHIARA di aver preso visione degli obblighi di Adeguata Verifica Rafforzata (D.Lgs. 231/2007) e si impegna ad adempierli separatamente, conservando la relativa documentazione nel fascicolo del cliente {dati['cliente']}."""
+        dich_text = f"""Avvocato {dati['avvocato']} DICHIARA di aver preso visione degli obblighi di Adeguata Verifica Rafforzata (D.Lgs. 231/2007) e si impegna ad adempierli separatamente, conservando la relativa documentazione nel fascicolo del cliente {dati['cliente']}."""
 
         dich_para = doc.add_paragraph()
         run_dich = dich_para.add_run(dich_text)
@@ -717,7 +724,7 @@ class WordExporter:
         # Data, Nome e Firma
         firma_para = doc.add_paragraph()
         firma_para.add_run(f"Data: {dati['data_valutazione']}\n\n")
-        firma_para.add_run(f"Il Professionista: {dati['avvocato']}\n\n")
+        firma_para.add_run(f"Avvocato: {dati['avvocato']}\n\n")
         firma_para.add_run("Firma: _______________________________")
         for run in firma_para.runs:
             run.font.size = Pt(11)
@@ -758,7 +765,7 @@ class WordExporter:
 
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = "Fattore"
-        hdr_cells[1].text = "x"
+        hdr_cells[1].text = ""
         hdr_cells[2].text = "Livello"
         hdr_cells[0].width = COL_WIDTH_FATTORE
         hdr_cells[1].width = COL_WIDTH_X
