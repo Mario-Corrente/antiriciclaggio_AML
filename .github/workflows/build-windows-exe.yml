@@ -30,15 +30,15 @@ jobs:
 
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller --name="Antiriciclaggio_AML" ^
-          --onefile ^
-          --windowed ^
-          --icon=icona.ico ^
-          --add-data "config;config" ^
-          --add-data "icona.ico;." ^
-          --hidden-import=tkinter ^
-          --hidden-import=openpyxl ^
-          --hidden-import=docx ^
+        pyinstaller --name="Antiriciclaggio_AML" `
+          --onefile `
+          --windowed `
+          --icon=icona.ico `
+          --add-data "config;config" `
+          --add-data "icona.ico;." `
+          --hidden-import=tkinter `
+          --hidden-import=openpyxl `
+          --hidden-import=docx `
           antiriciclaggio.py
 
     - name: Upload EXE as artifact
